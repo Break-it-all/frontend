@@ -8,7 +8,7 @@ export default function Page() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost/api/test');
+      const response = await axios.get('http://localhost:8080/api/test');
       console.log(response.data);
       setData(response.data);
     } catch (error) {
