@@ -1,9 +1,12 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import { RootState } from "@/redux/store";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
-export default function Page() {
+const Test = () => {
+  const dispatch = useDispatch();
+  const bpmFromRedux = useSelector((state: RootState) => state.bpm.bpm);
   const [data, setData] = useState(null);
 
   const fetchData = async () => {
@@ -19,11 +22,12 @@ export default function Page() {
   useEffect(() => {
     fetchData();
   }, []);
-
   return (
-    <div>
-      <h1>Test Page</h1>
-      <h2>{data ? JSON.stringify(data) : "Loading data..."}</h2>
-    </div>
+    <>
+      <h1>test</h1>
+      <span>{bpmFromRedux}</span>
+    </>
   );
-}
+};
+
+export default Test;
