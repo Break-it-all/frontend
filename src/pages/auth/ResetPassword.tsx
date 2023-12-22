@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import FormInput from "../../components/auth/FormInput";
-import { userSaveRequest } from "../../types/userType";
-import { FcCollaboration } from "react-icons/fc";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { userUpdatePasswordRequest } from "../../types/userType";
 import { useAxios } from "../../api/useAxios";
 
-const Register = () => {
+export default function ResetPassword() {
   const axios = useAxios();
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -24,8 +21,6 @@ const Register = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [done, setDone] = useState(false);
-
-  useEffect(() => {}, [done]);
 
   const handleSendEmailAuth = async () => {
     try {
@@ -81,16 +76,15 @@ const Register = () => {
     }
   };
 
-  const handleSignUp = async () => {
+  const handleResetPassword = async () => {
     try {
-      const request: userSaveRequest = {
+      const request: userUpdatePasswordRequest = {
         email: email,
-        name: name,
         password: password,
         authId: authId || 0,
       };
 
-      const response = await axios.post(`/api/user/signup`, request, {
+      const response = await axios.patch(`/api/user/reset-password`, request, {
         headers: {},
       });
 
@@ -101,9 +95,9 @@ const Register = () => {
           setErrorData(response.data.data);
         } else {
           setEmail("");
-          setName("");
           setPassword("");
           setPasswordConfirm("");
+
           setDone(true);
         }
       }
@@ -117,32 +111,23 @@ const Register = () => {
   return (
     <div className="bg-slate-100 min-h-screen">
       <div className="h-full max-w-2xl flex justify-center items-center flex-col px-20 p-20 m-auto">
-        {}
         {done ? (
-          <div className="bg-white h-full w-full flex flex-col justify-center p-16 shadow-lg text-center gap-10">
+          <div className="bg-white h-full w-full flex flex-col justify-center px-16 py-32 shadow-lg text-center gap-4">
             <h2 className="font-bold text-3xl py-2">
-              🎉 회원가입이 완료되었습니다!
+              비밀번호가 변경되었습니다.
             </h2>
-            <div className="min-h-[300px] bg-gradient-to-r from-cyan-400 to-blue-500 flex flex-col items-center justify-center gap-4">
-              <div>
-                <p className="text-white font-medium">
-                  BITA IDE에서 즐거운 코딩을 즐겨보세요
-                </p>
-                <button
-                  className="text-lg font-bold bg-amber-300 text-blue-500 px-4 mt-2 rounded-lg"
-                  onClick={() => navigate("/signin")}
-                >
-                  시작하기
-                </button>
-              </div>
-              <div className="bg-gradient-to-r from-cyan-300 to-blue-300 rounded-[50%] shadow-lg">
-                <FcCollaboration className="size-40 p-4" />
-              </div>
+            <div>
+              <button
+                className="text-lg font-bold bg-blue-500 text-white px-8 py-1 mt-2 rounded-lg"
+                onClick={() => navigate("/signin")}
+              >
+                로그인
+              </button>
             </div>
           </div>
         ) : (
           <div className="bg-white h-full w-full flex flex-col justify-center p-16 shadow-lg">
-            <h3 className="font-bold text-3xl py-2">회원가입</h3>
+            <h3 className="font-bold text-3xl py-2">비밀번호 재설정</h3>
             <div className="flex flex-col gap-4 py-4">
               <div>
                 <div className="flex-grow flex gap-3">
@@ -194,24 +179,17 @@ const Register = () => {
               </div>
 
               <FormInput
-                value={name}
-                setValue={setName}
-                type="text"
-                name="이름"
-              />
-
-              <FormInput
                 value={password}
                 setValue={setPassword}
                 type="password"
-                name="비밀번호"
+                name="새 비밀번호"
               />
 
               <FormInput
                 value={passwordConfirm}
                 setValue={setPasswordConfirm}
                 type="password"
-                name="비밀번호 확인"
+                name="새 비밀번호 확인"
               />
 
               <div className="h-[1em] text-red-600 text-center text-sm">
@@ -220,9 +198,9 @@ const Register = () => {
 
               <button
                 className="bg-blue-500 text-white p-2 mb-4 mt-2"
-                onClick={handleSignUp}
+                onClick={handleResetPassword}
               >
-                로그인
+                비밀번호 변경하기
               </button>
             </div>
             <div className="flex justify-center">
@@ -236,5 +214,4 @@ const Register = () => {
       </div>
     </div>
   );
-};
-export default Register;
+}

@@ -4,6 +4,9 @@ import Layout from "./components/Layout";
 import Container from "./pages/Container";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ResetPassword from "./pages/auth/ResetPassword";
+import EmailAuth from "./pages/auth/EmailAuth";
+
 function App() {
   return (
     <Router>
@@ -12,8 +15,10 @@ function App() {
           <Route index element={<Main />} />
           <Route path="/Container/:id" element={<Container />} />
           <Route path="/Container/:id" element={<Container />} />
-          <Route path="/Auth/Login" element={<Login />} />
-          <Route path="/Auth/Register" element={<Register />} />
+          <Route path="/signin" element={<Login />} />
+          <Route path="/signup" element={<Register />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/email-auth/verify" element={<EmailAuth />} />
         </Route>
       </Routes>
     </Router>
