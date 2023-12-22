@@ -1,14 +1,20 @@
 import React, { useRef, useEffect } from "react";
 interface InputProps {
   label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-const Input = ({ label }: InputProps) => {
+
+const Input = ({ label, value, onChange }: InputProps) => {
   return (
-    <div>
-      <span className="text-sm">{label}</span>
-      <div className="border border-black">
-        <input type="text" />
-      </div>
+    <div className="w-full">
+      <label>{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        className="border border-black w-full"
+      />
     </div>
   );
 };
