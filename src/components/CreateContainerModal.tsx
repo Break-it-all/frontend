@@ -1,10 +1,10 @@
-import React, { ReactNode } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 interface CreateContainerModalProps {
   open: boolean;
   onClose: () => void;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 const CreateContainerModal = ({
@@ -12,17 +12,49 @@ const CreateContainerModal = ({
   onClose,
   children,
 }: CreateContainerModalProps) => {
-  if (!open) return null;
-  return ReactDOM.createPortal(
+  const [isBrowser, setIsBrowser] = useState(false);
+
+  useEffect(() => {
+    setIsBrowser(true);
+
+    if (open) {
+      const handleBackdropClick = (event: MouseEvent) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      };
+
+      window.addEventListener("click", handleBackdropClick);
+
+      return () => {
+        window.removeEventListener("click", handleBackdropClick);
+      };
+    }
+  }, [open, onClose]);
+
+  if (!isBrowser) {
+    return null;
+  }
+
+  const modalContent = open ? (
     <>
-      <div className="fixed top-0 left-0 right-0 bottom-0  bg-black opacity-50 z-[100]" />
-      <div className="flex flex-col justify-center items-center w-96 bg-white fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[100]">
-        <button onClick={onClose}>모달 닫기</button>
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        onClick={onClose}
+      />
+      <div
+        className="flex flex-col items-center w-96 bg-white fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 p-4 overflow-y-auto max-h-full rounded-lg pb-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+          BITA
+        </h1>
         {children}
       </div>
-    </>,
-    document.getElementById("global-modal") as HTMLElement
-  );
+    </>
+  ) : null;
+
+  return modalContent ? ReactDOM.createPortal(modalContent, document.getElementById("modal-root") as HTMLElement) : null;
 };
 
 export default CreateContainerModal;

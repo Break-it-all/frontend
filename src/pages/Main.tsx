@@ -1,40 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import axios from 'axios';
-import Button from "../components/Button";
 import Card from "../components/Card";
 import CreateContainerModal from "../components/CreateContainerModal";
 import Input from "../components/Input";
-import SelectInput from "../components/SelectInput";
+import CardSelectInput from '../components/CardSelectInput';
+import { useAxios } from '../api/useAxios';
 import { useState, useEffect } from "react";
-const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG5hdmVyLmNvbSIsImlhdCI6MTcwMzIyMjY4NywiZXhwIjoxNzAzMjI5ODg3fQ.AEk_lrOCN1Y8XjUYCUPwxOVZgQbhV6ObMJgXlg3ewTE';
+
 
 interface Container {
   containerId: number;
   name: string;
   mode: string;
   language: string;
-  description?: string;
+  description: string;
   createdAt: string;
 }
 
-const formatDate = (createdAt: string) => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    hour12: false
-  };
-
-  return new Date(createdAt)
-    .toLocaleString('ko-KR', options)
-    .replace(/\./g, '-')
-    .replace(/\s/g, '')
-    .replace(/:/g, '');
-}
-
 const Main = () => {
+  console.log('Main 컴포넌트 렌더링');
   const [myContainers, setMyContainers] = useState<Container[]>([]);
   const [sharedContainers, setSharedContainers] = useState<Container[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,8 +24,41 @@ const Main = () => {
   const [containerDescription, setContainerDescription] = useState('');
   const [containerLanguage, setContainerLanguage] = useState('');
   const [containerMode, setContainerMode] = useState('pair');
+  const axiosInstance = useAxios();
+
+
+  const handleDeleteSuccess = (deletedContainerId: number) => {
+    setMyContainers(currentContainers =>
+      currentContainers.filter(container => container.containerId !== deletedContainerId)
+    );
+    setSharedContainers(currentContainers =>
+      currentContainers.filter(container => container.containerId !== deletedContainerId)
+    );
+  };
+
+  const handleEdit = (updatedContainer: {
+    id: number;
+    title: string;
+  }) => {
+    setMyContainers(currentContainers =>
+      currentContainers.map(container =>
+        container.containerId === updatedContainer.id
+          ? { ...container, name: updatedContainer.title }
+          : container
+      )
+    );
+
+    setSharedContainers(currentSharedContainers =>
+      currentSharedContainers.map(container =>
+        container.containerId === updatedContainer.id
+          ? { ...container, name: updatedContainer.title }
+          : container
+      )
+    );
+  };
 
   const createContainer = () => {
+    console.log('createContainer 함수 실행');
     const postData = {
       name: containerName,
       mode: containerMode,
@@ -51,15 +66,13 @@ const Main = () => {
       description: containerDescription
     };
 
-    axios.post('http://localhost:8080/api/container', postData, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // 토큰 사용
-      }
-    })
+    axiosInstance.post('/api/container', postData)
       .then(response => {
         console.log('Container created:', response.data);
-        // 모달 닫기 및 상태 초기화
+        axiosInstance.get('/api/container/my')
+          .then(response => {
+            setMyContainers(response.data.data);
+          });
         setIsModalOpen(false);
         setContainerName('');
         setContainerDescription('');
@@ -69,84 +82,66 @@ const Main = () => {
       .catch(error => console.error('Error creating container:', error));
   };
 
-
-
   useEffect(() => {
-    // 내가 만든 컨테이너 조회
-    axios.get('http://localhost:8080/api/container/my', {
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
-      }
-    })
+    axiosInstance.get('/api/container/my')
       .then(response => {
-        const formattedData = response.data.data.map((container: Container) => ({
-          ...container,
-          createdAt: formatDate(container.createdAt)
-        }));
-        setMyContainers(formattedData);
+        setMyContainers(response.data.data);
       })
       .catch(error => console.error('Error fetching my containers:', error));
 
-    // 공유된 컨테이너 조회
-    axios.get('http://localhost:8080/api/container/shared', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    })
+    axiosInstance.get('/api/container/shared')
       .then(response => {
-        const formattedData = response.data.data.map((container: Container) => ({
-          ...container,
-          createdAt: formatDate(container.createdAt)
-        }));
-        setSharedContainers(formattedData);
+        setSharedContainers(response.data.data);
       })
       .catch(error => console.error('Error fetching shared containers:', error));
   }, []);
 
   return (
     <div className="bg-my-color min-h-screen ">
-      <div className="h-12 bg-white flex px-24 justify-between items-center sticky w-full left-0 top-0 z-[89] shadow-lg ">
-        <div>logo</div>
-        <div>user</div>
-      </div>
       <div className="h-full w-full flex justify-center items-center flex-col px-20 p-10 ">
         <div className="flex justify-between w-full items-center py-5">
-          <span>내 컨테이너 </span>
-          <Button onClick={() => setIsModalOpen(true)} text="컨테이너 생성" />
+          <span className="font-bold text-xl">내 컨테이너 </span>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            type="button"
+            className="flex justify-center items-center h-9 w-36 px-3 py-1 text-m font-bold text-blue-700 bg-blue-50 border border-blue-500 rounded-md transition duration-150 ease-in-out hover:bg-blue-200 focus:outline-none focus:ring focus:border-blue-300"
+          >
+            컨테이너 생성
+          </button>
         </div>
         <div className="flex flex-wrap gap-4 w-full justify-start">
 
           {myContainers.map((container) => (
             <Card
-              key={container.containerId}
               id={container.containerId}
               title={container.name}
               stack={container.mode}
-              descrition={container.language}
-
+              language={container.language}
+              description={container.description}
               createdAt={container.createdAt}
+              onDeleteSuccess={handleDeleteSuccess}
+              onEdit={handleEdit}
             />
           ))}
         </div>
-        <div className="flex justify-between w-full items-center py-5">
-          <span>공유된 컨테이너 </span>
+        <div className="flex justify-between w-full items-center py-5 mt-5">
+          <span className="font-bold text-xl">공유된 컨테이너 </span>
         </div>
         <div className="flex flex-wrap gap-4 w-full justify-start">
           {sharedContainers.map((container) => (
             <Card
-              key={container.containerId}
               id={container.containerId}
               title={container.name}
               stack={container.mode}
-              descrition={container.language}
+              language={container.language}
+              description={container.language}
               createdAt={container.createdAt}
+              onDeleteSuccess={handleDeleteSuccess}
+              onEdit={handleEdit}
             />
           ))}
         </div>
       </div>
-
 
       <CreateContainerModal
         open={isModalOpen}
@@ -154,7 +149,7 @@ const Main = () => {
       >
         <Input label="컨테이너 이름" value={containerName} onChange={e => setContainerName(e.target.value)} />
         <Input label="컨테이너 설명" value={containerDescription} onChange={e => setContainerDescription(e.target.value)} />
-        <SelectInput
+        <CardSelectInput
           label="사용언어"
           value={containerLanguage}
           onChange={e => setContainerLanguage(e.target.value)}
@@ -165,7 +160,7 @@ const Main = () => {
             { value: 'js', label: 'JavaScript' }
           ]}
         />
-        <SelectInput
+        <CardSelectInput
           label="모드선택"
           value={containerMode}
           onChange={e => setContainerMode(e.target.value)}
@@ -174,9 +169,15 @@ const Main = () => {
             { value: 'multi', label: 'Multi-User' }
           ]}
         />
-        <Button onClick={createContainer} text="컨테이너 생성" />
+        <button
+          onClick={createContainer}
+          type="button"
+          className="w-full h-8 px-3 py-1 text-sm font-medium leading-5 text-white bg-blue-500 rounded-md transition duration-150 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+        >
+          컨테이너 생성
+        </button>
       </CreateContainerModal>
     </div>
   );
-};
+}
 export default Main;
