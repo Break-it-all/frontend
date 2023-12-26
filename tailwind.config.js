@@ -3,7 +3,7 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      //커스텀 할 것들 넣으시면 됩니다.
+      // 커스텀할 것들을 넣으시면 됩니다.
       colors: {
         "my-blue": "#2C82D1",
         "my-border-color": "#767676",
@@ -15,5 +15,4 @@ module.exports = {
       },
     },
   },
-  plugins: [],
 };

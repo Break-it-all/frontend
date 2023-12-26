@@ -11,7 +11,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {}, [user]);
+  useEffect(() => { }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -29,7 +29,7 @@ const Layout = () => {
   return (
     <div className="bg-my-color min-h-screen overflow-x-hidden">
       <div className="h-12 bg-white flex px-24 justify-between items-center sticky w-full left-0 top-0 z-[89] shadow-lg float-start">
-        <div>logo</div>
+        <Link to="/" className="logo">logo</Link>
         <div>
           {user.email !== "" ? (
             <div className="flex gap-3">
