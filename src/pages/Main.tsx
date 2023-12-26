@@ -1,10 +1,9 @@
 import Card from "../components/Card";
 import CreateContainerModal from "../components/CreateContainerModal";
 import Input from "../components/Input";
-import CardSelectInput from '../components/CardSelectInput';
-import { useAxios } from '../api/useAxios';
+import CardSelectInput from "../components/CardSelectInput";
+import { useAxios } from "../api/useAxios";
 import { useState, useEffect } from "react";
-
 
 interface Container {
   containerId: number;
@@ -16,40 +15,40 @@ interface Container {
 }
 
 const Main = () => {
-  console.log('Main 컴포넌트 렌더링');
+  console.log("Main 컴포넌트 렌더링");
   const [myContainers, setMyContainers] = useState<Container[]>([]);
   const [sharedContainers, setSharedContainers] = useState<Container[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [containerName, setContainerName] = useState('');
-  const [containerDescription, setContainerDescription] = useState('');
-  const [containerLanguage, setContainerLanguage] = useState('');
-  const [containerMode, setContainerMode] = useState('pair');
+  const [containerName, setContainerName] = useState("");
+  const [containerDescription, setContainerDescription] = useState("");
+  const [containerLanguage, setContainerLanguage] = useState("");
+  const [containerMode, setContainerMode] = useState("pair");
   const axiosInstance = useAxios();
 
-
   const handleDeleteSuccess = (deletedContainerId: number) => {
-    setMyContainers(currentContainers =>
-      currentContainers.filter(container => container.containerId !== deletedContainerId)
+    setMyContainers((currentContainers) =>
+      currentContainers.filter(
+        (container) => container.containerId !== deletedContainerId
+      )
     );
-    setSharedContainers(currentContainers =>
-      currentContainers.filter(container => container.containerId !== deletedContainerId)
+    setSharedContainers((currentContainers) =>
+      currentContainers.filter(
+        (container) => container.containerId !== deletedContainerId
+      )
     );
   };
 
-  const handleEdit = (updatedContainer: {
-    id: number;
-    title: string;
-  }) => {
-    setMyContainers(currentContainers =>
-      currentContainers.map(container =>
+  const handleEdit = (updatedContainer: { id: number; title: string }) => {
+    setMyContainers((currentContainers) =>
+      currentContainers.map((container) =>
         container.containerId === updatedContainer.id
           ? { ...container, name: updatedContainer.title }
           : container
       )
     );
 
-    setSharedContainers(currentSharedContainers =>
-      currentSharedContainers.map(container =>
+    setSharedContainers((currentSharedContainers) =>
+      currentSharedContainers.map((container) =>
         container.containerId === updatedContainer.id
           ? { ...container, name: updatedContainer.title }
           : container
@@ -58,42 +57,46 @@ const Main = () => {
   };
 
   const createContainer = () => {
-    console.log('createContainer 함수 실행');
+    console.log("createContainer 함수 실행");
     const postData = {
       name: containerName,
       mode: containerMode,
       language: containerLanguage,
-      description: containerDescription
+      description: containerDescription,
     };
 
-    axiosInstance.post('/api/container', postData)
-      .then(response => {
-        console.log('Container created:', response.data);
-        axiosInstance.get('/api/container/my')
-          .then(response => {
-            setMyContainers(response.data.data);
-          });
+    axiosInstance
+      .post("/api/container", postData)
+      .then((response) => {
+        console.log("Container created:", response.data);
+        axiosInstance.get("/api/container/my").then((response) => {
+          setMyContainers(response.data.data);
+        });
         setIsModalOpen(false);
-        setContainerName('');
-        setContainerDescription('');
-        setContainerLanguage('java');
-        setContainerMode('pair');
+        setContainerName("");
+        setContainerDescription("");
+        setContainerLanguage("java");
+        setContainerMode("pair");
       })
-      .catch(error => console.error('Error creating container:', error));
+      .catch((error) => console.error("Error creating container:", error));
   };
 
   useEffect(() => {
-    axiosInstance.get('/api/container/my')
-      .then(response => {
+    axiosInstance
+      .get("/api/container/my")
+      .then((response) => {
         setMyContainers(response.data.data);
       })
-      .catch(error => console.error('Error fetching my containers:', error));
+      .catch((error) => console.error("Error fetching my containers:", error));
 
-    axiosInstance.get('/api/container/shared')
-      .then(response => {
+    axiosInstance
+      .get("/api/container/shared")
+      .then((response) => {
         setSharedContainers(response.data.data);
       })
-      .catch(error => console.error('Error fetching shared containers:', error));
+      .catch((error) =>
+        console.error("Error fetching shared containers:", error)
+      );
   }, []);
 
   return (
@@ -110,7 +113,6 @@ const Main = () => {
           </button>
         </div>
         <div className="flex flex-wrap gap-4 w-full justify-start">
-
           {myContainers.map((container) => (
             <Card
               id={container.containerId}
@@ -147,26 +149,34 @@ const Main = () => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >
-        <Input label="컨테이너 이름" value={containerName} onChange={e => setContainerName(e.target.value)} />
-        <Input label="컨테이너 설명" value={containerDescription} onChange={e => setContainerDescription(e.target.value)} />
+        <Input
+          label="컨테이너 이름"
+          value={containerName}
+          onChange={(e) => setContainerName(e.target.value)}
+        />
+        <Input
+          label="컨테이너 설명"
+          value={containerDescription}
+          onChange={(e) => setContainerDescription(e.target.value)}
+        />
         <CardSelectInput
           label="사용언어"
           value={containerLanguage}
-          onChange={e => setContainerLanguage(e.target.value)}
+          onChange={(e) => setContainerLanguage(e.target.value)}
           options={[
-            { value: 'java', label: 'Java' },
-            { value: 'python', label: 'Python' },
-            { value: 'cpp', label: 'C++' },
-            { value: 'js', label: 'JavaScript' }
+            { value: "java", label: "Java" },
+            { value: "python", label: "Python" },
+            { value: "cpp", label: "C++" },
+            { value: "js", label: "JavaScript" },
           ]}
         />
         <CardSelectInput
           label="모드선택"
           value={containerMode}
-          onChange={e => setContainerMode(e.target.value)}
+          onChange={(e) => setContainerMode(e.target.value)}
           options={[
-            { value: 'pair', label: 'Pair Programming' },
-            { value: 'multi', label: 'Multi-User' }
+            { value: "pair", label: "Pair Programming" },
+            { value: "multi", label: "Multi-User" },
           ]}
         />
         <button
@@ -179,5 +189,5 @@ const Main = () => {
       </CreateContainerModal>
     </div>
   );
-}
+};
 export default Main;

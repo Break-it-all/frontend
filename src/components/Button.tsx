@@ -1,13 +1,12 @@
 import React, { useRef, useEffect } from "react";
-interface ButtonProps {
-  text: string;
-  onClick?: () => void;
-}
-const Button = ({ text, onClick }: ButtonProps) => {
+interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {}
+
+const Button = ({ className, children, ...props }: ButtonProps) => {
   return (
-    <button onClick={onClick} className="bg-my-blue text-white p-2">
-      {text}
+    <button className={"bg-my-blue text-white p-2 " + className} {...props}>
+      {children}
     </button>
   );
 };
+
 export default Button;
