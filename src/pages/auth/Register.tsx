@@ -4,12 +4,15 @@ import FormInput from "../../components/auth/FormInput";
 import { userSaveRequest } from "../../types/userType";
 import { FcCollaboration } from "react-icons/fc";
 import { FaSpinner } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAxios } from "../../api/useAxios";
+import { AppDispatch } from "../../redux/store";
+import { logout } from "../../redux/modules/user";
 
 const Register = () => {
   const axios = useAxios();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,6 +31,9 @@ const Register = () => {
   useEffect(() => {}, [done]);
 
   const handleSendEmailAuth = async () => {
+    dispatch(logout());
+    localStorage.removeItem("accessToken");
+
     try {
       setIsLoading(true);
       const response = await axios.post(
@@ -56,12 +62,13 @@ const Register = () => {
   const handleCheckEmailAuth = async () => {
     try {
       console.log(email, authId);
-      const response = await axios.get(
-        `api/email-auth?email=${email}&id=${authId}`,
-        {
-          headers: {},
-        }
-      );
+      const request = {
+        email: email,
+        authId: authId,
+      };
+      const response = await axios.post(`api/email-auth/check`, request, {
+        headers: {},
+      });
 
       if (response.data.message !== null) {
         setErrorMessage(response.data.message);

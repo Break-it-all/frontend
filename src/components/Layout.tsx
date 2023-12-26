@@ -5,13 +5,14 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, store } from "../redux/store";
 import { logout } from "../redux/modules/user";
 import { useEffect } from "react";
+import { persistor } from "..";
 const Layout = () => {
-  const user = store.getState().userSlice;
+  const user = store.getState().user;
   const axios = useAxios();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => { }, [user]);
+  useEffect(() => {}, [user]);
 
   const handleLogout = async () => {
     try {
@@ -20,6 +21,8 @@ const Layout = () => {
 
       localStorage.removeItem("accessToken");
       dispatch(logout());
+      await persistor.purge();
+
       navigate("/signin");
     } catch (error) {
       console.log(error);
@@ -29,7 +32,9 @@ const Layout = () => {
   return (
     <div className="bg-my-color min-h-screen overflow-x-hidden">
       <div className="h-12 bg-white flex px-24 justify-between items-center sticky w-full left-0 top-0 z-[89] shadow-lg float-start">
-        <Link to="/" className="logo">logo</Link>
+        <Link to="/" className="logo">
+          logo
+        </Link>
         <div>
           {user.email !== "" ? (
             <div className="flex gap-3">

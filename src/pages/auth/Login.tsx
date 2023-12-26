@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
-import { UserState, login } from "../../redux/modules/user";
+import { UserState, login, logout } from "../../redux/modules/user";
 import { userFindRequest } from "../../types/userType";
 import { FcHome } from "react-icons/fc";
 import FormInput from "../../components/auth/FormInput";
@@ -19,6 +19,9 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignIn = async () => {
+    dispatch(logout());
+    localStorage.removeItem("accessToken");
+
     try {
       const request: userFindRequest = {
         email: email,
@@ -42,6 +45,7 @@ const Login = () => {
 
           console.log("set default header : ", response.data.data.accessToken);
           const user: UserState = {
+            id: response.data.data.id,
             email: response.data.data.email,
             name: response.data.data.name,
           };
