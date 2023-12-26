@@ -113,35 +113,37 @@ const Main = () => {
           </button>
         </div>
         <div className="flex flex-wrap gap-4 w-full justify-start">
-          {myContainers.map((container) => (
-            <Card
-              id={container.containerId}
-              title={container.name}
-              stack={container.mode}
-              language={container.language}
-              description={container.description}
-              createdAt={container.createdAt}
-              onDeleteSuccess={handleDeleteSuccess}
-              onEdit={handleEdit}
-            />
-          ))}
+          {myContainers &&
+            myContainers.map((container) => (
+              <Card
+                id={container.containerId}
+                title={container.name}
+                stack={container.mode}
+                language={container.language}
+                description={container.description}
+                createdAt={container.createdAt}
+                onDeleteSuccess={handleDeleteSuccess}
+                onEdit={handleEdit}
+              />
+            ))}
         </div>
         <div className="flex justify-between w-full items-center py-5 mt-5">
           <span className="font-bold text-xl">공유된 컨테이너 </span>
         </div>
         <div className="flex flex-wrap gap-4 w-full justify-start">
-          {sharedContainers.map((container) => (
-            <Card
-              id={container.containerId}
-              title={container.name}
-              stack={container.mode}
-              language={container.language}
-              description={container.language}
-              createdAt={container.createdAt}
-              onDeleteSuccess={handleDeleteSuccess}
-              onEdit={handleEdit}
-            />
-          ))}
+          {sharedContainers &&
+            sharedContainers.map((container) => (
+              <Card
+                id={container.containerId}
+                title={container.name}
+                stack={container.mode}
+                language={container.language}
+                description={container.language}
+                createdAt={container.createdAt}
+                onDeleteSuccess={handleDeleteSuccess}
+                onEdit={handleEdit}
+              />
+            ))}
         </div>
       </div>
 

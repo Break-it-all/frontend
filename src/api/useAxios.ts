@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { persistor } from "..";
 
 export function useAxios() {
   const navigate = useNavigate();
@@ -33,27 +34,33 @@ export function useAxios() {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response.data.message === "Expired Access Token") {
-        return await instance
-          .post(`${baseURL}/api/user/reissue-token`)
-          .then((response) => {
-            localStorage.setItem("accessToken", response.data.data.accessToken);
-            originalRequest.headers.authorization =
-              response.headers.authorization;
+      if (error.response && error.response.data) {
+        if (error.response.data.message === "Expired Access Token") {
+          return await instance
+            .post(`${baseURL}/api/user/reissue-token`)
+            .then((response) => {
+              localStorage.setItem(
+                "accessToken",
+                response.data.data.accessToken
+              );
+              originalRequest.headers.authorization =
+                response.headers.authorization;
 
-            return instance(originalRequest);
-          })
-          .catch((error) => {
-            localStorage.removeItem("accessToken");
+              return instance(originalRequest);
+            })
+            .catch(async (error) => {
+              localStorage.removeItem("accessToken");
+              await persistor.purge();
 
-            navigate("/signin");
-            return Promise.reject(error);
-          });
-      } else if (
-        error.response.data.status.message === "Invalid Access Token"
-      ) {
-        localStorage.removeItem("accessToken");
-        navigate("/login");
+              navigate("/signin");
+              return Promise.reject(error);
+            });
+        } else if (
+          error.response.data.status.message === "Invalid Access Token"
+        ) {
+          localStorage.removeItem("accessToken");
+          navigate("/login");
+        }
       }
     }
   );
