@@ -47,7 +47,6 @@ const Main = () => {
   //       console.error("Error fetching data:", error);
   //     });
   // }, []);
-
   return (
     <div className="bg-my-color min-h-screen ">
       <div className="h-12 bg-white flex px-24 justify-between items-center sticky w-full left-0 top-0 z-[89] shadow-lg ">
@@ -57,11 +56,12 @@ const Main = () => {
       <div className="h-full w-full flex justify-center items-center flex-col px-20 p-10 ">
         <div className="flex justify-between w-full items-center py-5">
           <span>내 컨테이너 </span>
-          <Button onClick={() => setIsModalOpen(true)} text="컨테이너 생성" />
+          <Button onClick={() => setIsModalOpen(true)}>컨테이너 생성</Button>
         </div>
         <div className="flex flex-wrap gap-4 w-full justify-start">
           {data.map((v) => (
             <Card
+              key={v.id}
               id={v.id}
               title={v.title}
               stack={v.stack}
@@ -76,6 +76,7 @@ const Main = () => {
         <div className="flex flex-wrap gap-4 w-full justify-start">
           {data.map((v) => (
             <Card
+              key={v.id}
               id={v.id}
               title={v.title}
               stack={v.stack}

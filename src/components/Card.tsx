@@ -22,10 +22,9 @@ const Card = ({ id, title, stack, descrition, createdAt }: CardProps) => {
         {descrition}
       </div>
       <span className="text-sm text-gray-300">{createdAt}</span>
-      <Button
-        onClick={() => navigate(`/container/${id}`)}
-        text="컨테이너 실행"
-      />
+      <Button onClick={() => navigate(`/container/${id}`)}>
+        컨테이너 실행
+      </Button>
     </div>
   );
 };
