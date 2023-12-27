@@ -7,6 +7,7 @@ module.exports = {
       colors: {
         "my-blue": "#2C82D1",
         "my-border-color": "#767676",
+        "my-black": "#1e1e1e",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

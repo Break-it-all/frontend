@@ -6,7 +6,7 @@ import { MonacoBinding } from "y-monaco";
 import axios from "axios";
 import { editor } from "monaco-editor";
 
-function MonacoEditorComponent({ roomId, code, onCodeChange }: any) {
+function MonacoEditorComponent({ roomId, code, onCodeChange, userRole }: any) {
   const editorRef = useRef<any>("");
 
   const handleEditorChange = (newValue: string | undefined) => {
@@ -73,9 +73,9 @@ function MonacoEditorComponent({ roomId, code, onCodeChange }: any) {
 
   return (
     <>
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full h-full">
         <Editor
-          height="80vh"
+          height="70vh"
           defaultLanguage="javascript"
           defaultValue={code}
           theme="vs-dark"
@@ -85,6 +85,7 @@ function MonacoEditorComponent({ roomId, code, onCodeChange }: any) {
             minimap: { enabled: false },
             autoClosingBrackets: "always",
             autoClosingQuotes: "always",
+            readOnly: userRole === "navigator", // Set readOnly based on the user's role
           }}
           onMount={handleEditorDidMount}
         />

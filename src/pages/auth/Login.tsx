@@ -71,7 +71,8 @@ const Login = () => {
         <div className="h-full w-full bg-blue-500  p-auto">
           {/* <div className="h-full w-full bg-gradient-to-r from-cyan-400 to-blue-500 p-auto"> */}
           <div className="h-full flex flex-col justify-center items-center gap-3 text-white p-3">
-            <h3 className="text-4xl font-extrabold">BITA IDE</h3>
+            <h3 className="text-4xl font-extrabold">B IT A</h3>
+            <h3 className="text-4xl font-extrabold">IDE</h3>
             <p>BITA IDE 서비스 이용을 위해 로그인 해주세요.</p>
             <FcHome className="size-36" />
           </div>

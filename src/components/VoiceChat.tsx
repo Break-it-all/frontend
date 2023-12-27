@@ -4,7 +4,7 @@ import { Stomp, CompatClient } from "@stomp/stompjs";
 import { FaMicrophone } from "react-icons/fa";
 
 interface Props {
-  id: number;
+  id: number | undefined;
   name: string;
 }
 
@@ -308,20 +308,36 @@ export default function VoiceChat({ id, name }: Props) {
       <div className="flex justify-between items-center">
         <p className="font-bold">VOICE CHAT</p>
         <div className="flex gap-2">
-          <button
+          <div
             onClick={handleEnterRoom}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"
+            className="flex justify-center items-center cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"
           >
-            오디오 연결
-          </button>
-          <button
+            <img
+              src={"/assets/discord.svg"}
+              alt={"교체"}
+              className="w-4 h-4 mr-1 ml-2"
+            />
+          </div>
+          <div
             onClick={isVoiceChatting ? handleEndVoiceChat : handleStartStream}
             className={`${
               isVoiceChatting ? "bg-red-500" : "bg-green-500"
-            } hover:bg-red-700 text-white font-bold py-1 px-3 rounded`}
+            } hover:bg-red-700  font-bold py-1 px-3 rounded flex cursor-pointer justify-center items-center`}
           >
-            {isVoiceChatting ? "나가기" : "입장"}
-          </button>
+            {isVoiceChatting ? (
+              <img
+                src={"/assets/box-arrow-right.svg"}
+                alt={"퇴장"}
+                className="w-4 h-4 mr-1 ml-2"
+              />
+            ) : (
+              <img
+                src={"/assets/box-arrow-in-right.svg"}
+                alt={"입장"}
+                className="w-4 h-4 mr-1 ml-2"
+              />
+            )}
+          </div>
         </div>
       </div>
 
