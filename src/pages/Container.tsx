@@ -108,6 +108,7 @@ const Container = () => {
         }
 
         const data = response.data; // 파일 데이터로 대체할 수 있습니다.
+        console.log(data);
         data.data.output
           ? setCompileResult(data.data.output)
           : setCompileResult(data.data.error);
@@ -161,19 +162,17 @@ const Container = () => {
           `/api/container/${containerData?.containerId}/folder`,
           requestBody
         )
-        .then((response) => {
+        .then(async (response) => {
           if (response.status === 200) {
-            const newFolderData = response.data; // 서버에서 반환된 새 폴더 정보
             // UI 상태 업데이트: 새 폴더 정보를 기존 폴더 데이터에 추가
-            setContainerData((prevContainerData) => {
-              if (prevContainerData) {
-                return {
-                  ...prevContainerData,
-                  folders: [...prevContainerData.folders, newFolderData],
-                };
+            if (response.status === 200) {
+              // Fetch the updated container data after switching the role
+              const updatedResponse = await axios.get(`/api/container/${id}`);
+              if (updatedResponse.status === 200) {
+                const updatedData = updatedResponse.data.data;
+                setContainerData(updatedData);
               }
-              return prevContainerData;
-            });
+            }
           }
         })
         .catch((error) => {
@@ -190,18 +189,16 @@ const Container = () => {
       if (response.status !== 200) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const newFolderData = response.data; // 서버에서 반환된 새 폴더 정보
 
       // UI 상태 업데이트: 새 폴더 정보를 기존 폴더 데이터에 추가
-      setContainerData((prevContainerData) => {
-        if (prevContainerData) {
-          return {
-            ...prevContainerData,
-            folders: [...prevContainerData.folders, newFolderData],
-          };
+      if (response.status === 200) {
+        // Fetch the updated container data after switching the role
+        const updatedResponse = await axios.get(`/api/container/${id}`);
+        if (updatedResponse.status === 200) {
+          const updatedData = updatedResponse.data.data;
+          setContainerData(updatedData);
         }
-        return prevContainerData;
-      });
+      }
       // 여기에서 파일 데이터를 처리하십시오.
     }
     setModalOpen(false); // 모달 닫기
@@ -349,32 +346,9 @@ const Container = () => {
                 userRole={userRole}
               />
             </div>
-            {/* <Resizable
-              defaultSize={{ width: "100%", height: "300px" }}
-              minHeight={"20%"}
-              maxHeight={"90%"}
-              enable={{
-                top: true,
-                right: false,
-                bottom: true,
-                left: false,
-                topRight: false,
-                bottomRight: false,
-                bottomLeft: false,
-                topLeft: false,
-              }}
-              handleStyles={{
-                bottom: {
-                  width: "100%",
-                  height: "5px",
-                  backgroundColor: "#d1d5db",
-                },
-              }}
-            > */}
             <div className="flex-1 overflow-y-auto bg-my-black text-gray-50 border-t-2 border-gray-600 pl-2">
               {compileResult}
             </div>
-            {/* </Resizable> */}
           </div>
         </Resizable>
       </div>
