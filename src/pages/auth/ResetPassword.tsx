@@ -3,10 +3,14 @@ import FormInput from "../../components/auth/FormInput";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import { userUpdatePasswordRequest } from "../../types/userType";
-import { useAxios } from "../../api/useAxios";
+import axios from "axios";
+// import { useAxios } from "../../api/useAxios";
 
 export default function ResetPassword() {
-  const axios = useAxios();
+  // const axios = useAxios();
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:8080",
+  });
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");

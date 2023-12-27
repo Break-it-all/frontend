@@ -5,12 +5,16 @@ import { userSaveRequest } from "../../types/userType";
 import { FcCollaboration } from "react-icons/fc";
 import { FaSpinner } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { useAxios } from "../../api/useAxios";
+// import { useAxios } from "../../api/useAxios";
 import { AppDispatch } from "../../redux/store";
 import { logout } from "../../redux/modules/user";
+import axios from "axios";
 
 const Register = () => {
-  const axios = useAxios();
+  // const axios = useAxios();
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:8080",
+  });
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
