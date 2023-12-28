@@ -167,7 +167,7 @@ const Main = () => {
           onChange={(e) => setContainerLanguage(e.target.value)}
           options={[
             { value: "java", label: "Java" },
-            { value: "python", label: "Python" },
+            { value: "py", label: "Python" },
             { value: "cpp", label: "C++" },
             { value: "js", label: "JavaScript" },
           ]}
